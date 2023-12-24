@@ -18,7 +18,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
 	// GLFW window initialization
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1280, 720, "LearnOpenGL", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "ERROR: Failed to create GLFW window!" << std::endl;
 		glfwTerminate();
@@ -33,9 +33,20 @@ int main() {
 		return -1;
 	}
 
-	// viewport
-	glViewport(0, 0, 800, 600);
+	// 3D coords for a triangle
+	float vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+	};
+
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
 	
+	// bind the newly created buffer to a VBO then copy the vertex data onto the buffer's memory
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
 	// the application should keep running until we explicitly told it to stop
 	while (!glfwWindowShouldClose(window)) {
 		// listen to escape key being pressed to close the GLFW window
