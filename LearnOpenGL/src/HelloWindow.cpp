@@ -13,7 +13,13 @@ const char* vertexShaderSource = "#version 330 core\n"
 	"layout (location = 0) in vec3 aPos;\n"
 	"void main() {\n"
 	"    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"}\0";
+	"}\n\0";
+
+const char* fragmentShaderSource = "#version 330 core\n"
+	"out vec4 FragColor;\n"
+	"void main() {\n"
+	"FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	"}\n\0";
 
 int main() {
 	
@@ -42,7 +48,7 @@ int main() {
 	// create the vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
-	// bind the GLSL code to the vertex shader then compile the code
+	// bind the GLSL vertex shader code to the vertex shader object then compile it
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 
@@ -54,6 +60,21 @@ int main() {
 	if (!success) {
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+
+	// create the fragment shader
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	
+	// bind the GLSL fragment shader code to the fragment shader object then compile it
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	// check if the fragment shader compile was a success or not.
+	// If not check and print out information and see any errors.
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	// 3D coords for a triangle
