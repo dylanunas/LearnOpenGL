@@ -3,6 +3,7 @@ bin/
 build/
 out/
 .vs/
+x64/Debug/
 
 # files
 *.user

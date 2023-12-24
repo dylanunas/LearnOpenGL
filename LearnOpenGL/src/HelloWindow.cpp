@@ -45,6 +45,7 @@ int main() {
 		return -1;
 	}
 
+	// ============================= Vertex Shader ===============================
 	// create the vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
@@ -62,6 +63,7 @@ int main() {
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
+	// ============================= Fragment Shader ===============================
 	// create the fragment shader
 	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	
@@ -76,6 +78,25 @@ int main() {
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+
+	// ======================== Linking Shaders ===========================
+	// create the shader program object
+	unsigned int shaderProgram = glCreateProgram();
+
+	// attach all shaders onto the shader program and link them all together
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	// check if the compilation is successful or not
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+	}
+	// no longer need shader objects once successfully linked to the shader program
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
 	// 3D coords for a triangle
 	float vertices[] = {
@@ -99,6 +120,9 @@ int main() {
 		// rendering commands here
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		// ====================== Drawing a Triangle =======================
+		glUseProgram(shaderProgram);
 
 		// listen to events
 		glfwPollEvents();
