@@ -9,6 +9,12 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 // function declaration for user inputs
 void processInput(GLFWwindow* window);
 
+const char* vertexShaderSource = "#version 330 core\n"
+	"layout (location = 0) in vec3 aPos;\n"
+	"void main() {\n"
+	"    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+	"}\0";
+
 int main() {
 	
 	// glfw configuration, uses OpenGL version 3 and set profile to core
@@ -31,6 +37,23 @@ int main() {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "ERROR: Failed to initialize GLAD!" << std::endl;
 		return -1;
+	}
+
+	// create the vertex shader
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+	// bind the GLSL code to the vertex shader then compile the code
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+
+	// check if the vertex shader compile was a success or not.
+	// If not check and print out information and see any errors.
+	int  success;
+	char infoLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	// 3D coords for a triangle
