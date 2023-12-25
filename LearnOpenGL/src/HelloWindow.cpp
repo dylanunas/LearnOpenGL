@@ -105,12 +105,20 @@ int main() {
 		 0.0f,  0.5f, 0.0f
 	};
 
-	unsigned int VBO;
+	unsigned int VBO, VAO;
+	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+
+	// bind the VAO
+	glBindVertexArray(VAO);
 	
 	// bind the newly created buffer to a VBO then copy the vertex data onto the buffer's memory
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	// Interpreting the Vertex Points
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	// the application should keep running until we explicitly told it to stop
 	while (!glfwWindowShouldClose(window)) {
@@ -123,6 +131,8 @@ int main() {
 
 		// ====================== Drawing a Triangle =======================
 		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// listen to events
 		glfwPollEvents();
