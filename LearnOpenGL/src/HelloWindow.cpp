@@ -17,8 +17,9 @@ const char* vertexShaderSource = "#version 330 core\n"
 
 const char* fragmentShaderSource = "#version 330 core\n"
 	"out vec4 FragColor;\n"
+	"uniform vec4 ourColor;\n"
 	"void main() {\n"
-	"FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	"FragColor = ourColor;\n"
 	"}\n\0";
 
 const char* fragmentShaderSource2 = "#version 330 core\n"
@@ -117,7 +118,6 @@ int main() {
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 	// no longer need shader objects once successfully linked to the shader program
-	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
 	// ======================== Linking Shaders 2 =========================== 
@@ -136,8 +136,9 @@ int main() {
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 	// no longer need shader objects once successfully linked to the shader program
+	glDeleteShader(fragmentShader2);
+	// delete the vertex shader as both shader programs no longer need it
 	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
 
 	// 3D coords for a triangle
 	float triangleVertices[] = {
@@ -220,13 +221,23 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// ====================== Drawing a Triangle =======================
+		// use the program before updating the uniform value
 		glUseProgram(shaderProgram);
+
+		// update the uniform value in fragmentShader in this application
+		double timeValue = glfwGetTime();
+		float greenValue = static_cast<float>(sin(timeValue) / 2.0 + 0.5);
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		
+		// draw the triangle
 		glBindVertexArray(VAO[0]);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		
-		glUseProgram(shaderProgram2);
-		glBindVertexArray(VAO[1]);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+	
+		// use a diferent shader program to draw the second triangle/shape
+		//glUseProgram(shaderProgram2);
+		//glBindVertexArray(VAO[1]);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		// drawing a triangle
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
 		
@@ -240,13 +251,10 @@ int main() {
 
 		// drawing two separate triangles using glDrawArrays
 		//glDrawArrays(GL_TRIANGLES, 0, 6);
-		
-		// unbind the VAO
-		glBindVertexArray(0);
 
 		// listen to events
-		glfwPollEvents();
 		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	// delete all GLFW resources before terminating the program
