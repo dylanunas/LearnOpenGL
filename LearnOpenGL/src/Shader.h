@@ -10,6 +10,7 @@
 
 class Shader {
 private:
+	// the shader program
 	unsigned int ID;
 
 public:
