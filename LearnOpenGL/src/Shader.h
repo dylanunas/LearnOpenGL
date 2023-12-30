@@ -25,6 +25,13 @@ public:
 	void use();
 
 	// utility functions
+
+	// getters
+	
+	// get the ID of the shader program
+	unsigned int getID() const;
+
+	// setters
 	void setBool(const std::string& name, bool value) const;
 	void setInt(const std::string& name, int value) const;
 	void setFloat(const std::string& name, float value) const;

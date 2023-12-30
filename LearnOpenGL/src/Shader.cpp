@@ -74,6 +74,11 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 	glDeleteShader(fragment);
 }
 
+// get the ID of the shader program
+unsigned int Shader::getID() const {
+	return ID;
+}
+
 // use/activate the shader
 void Shader::use() {
 	glUseProgram(ID);

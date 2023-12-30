@@ -77,12 +77,17 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// ====================== Drawing a Triangle =======================
+		
 		// use the program before updating the uniform value
 		shaderProgram.use();
 
 		// draw the triangle
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		// move the triangle to the right
+		float xLocationOffset = 0.5f;
+		shaderProgram.setFloat("xOffset", xLocationOffset);
 	
 		// listen to events
 		glfwSwapBuffers(window);
