@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\Utility\Utility.cpp" />
     <ClCompile Include="src\Window\Window.cpp" />
     <ClCompile Include="src\LearnOpenGL.cpp" />
     <ClCompile Include="src\ShaderManager\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Utility\Utility.h" />
     <ClInclude Include="src\Window\Window.h" />
     <ClInclude Include="src\ShaderManager\Shader.h" />
   </ItemGroup>

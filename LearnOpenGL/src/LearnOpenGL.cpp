@@ -7,6 +7,7 @@
 
 #include "Window/Window.h"
 #include "ShaderManager/Shader.h"
+#include "Utility/Utility.h"
 
 
 int main() {
@@ -26,9 +27,9 @@ int main() {
 	float vertices[] = {
 		// positions		 // colours         // texture coords
 		-0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // bottom left
-		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,   // bottom right
-		-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,   // top left
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  1.0f, 1.0f    // top right
+		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  2.0f, 0.0f,   // bottom right
+		-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 2.0f,   // top left
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  2.0f, 2.0f    // top right
 	};
 	unsigned int indices[] = {
 		0, 1, 2,  // first triangle
@@ -61,21 +62,26 @@ int main() {
 	glEnableVertexAttribArray(2);
 
 	// ==================== creating and loading a texture =======================
-	unsigned int texture;
+	unsigned int texture, texture2;
+    // ----------------------------
 	glGenTextures(1, &texture);
+	// set texture wrapping and filtering options for the first texture
 	glBindTexture(GL_TEXTURE_2D, texture);
-
-	// set texture wrapping and filtering options
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// load the texture from an image
-	int width, height, nrChannels;
+	int width,  height,  nrChannels;  // details for 1st image
+	int width2, height2, nrChannels2; // details for 2nd image
+	// load the first image
 	unsigned char* data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
+	// load the second image
+	unsigned char* data2 = stbi_load("textures/awesomeface.png", &width2, &height2, &nrChannels2, 0);
 	// check if the data has loaded successfully
 	if (data) {
+		// generate first texture
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
@@ -84,23 +90,58 @@ int main() {
 	}
 	stbi_image_free(data);
 
+	// Generate the 2nd texture
+	glGenTextures(1, &texture2);
+	// set texture wrapping and filtering options for the first texture
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (data2) {
+		// generate second texture
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data2);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "ERROR: Failed to load the texture!" << std::endl;
+	}
+	stbi_image_free(data2);
+
+	// set the textures
+	shaderProgram.use();
+	shaderProgram.setInt("ourTexture", 0);
+	shaderProgram.setInt("ourTexture2", 1);
+
+	// uniform value for mixing texture 
+	float diffBetweenTextures = 0.2f;
+
 	// ============================== render loop ================================
 	while (!glfwWindowShouldClose(window)) {
+		// ======================== Listening to Key Events ===========================
 		// listen to escape key being pressed to close the GLFW window
 		Window::processInput(window);
+		Utility::increaseTextureDiff(window, &diffBetweenTextures);
 		
+		// ============================================================================
+		 
 		// rendering commands here
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// ====================== Drawing a Triangle =======================
-		
-		// use the program before updating the uniform value
-		shaderProgram.use();
+		// ====================== Drawing =======================		
 
-		// apply the texture
+		// apply the first texture
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		// draw the triangle
+		// apply the second texture
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
+		// apply the mix ratio between the textures
+		shaderProgram.setFloat("textureDiff", diffBetweenTextures);
+
+		// draw the object
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	
