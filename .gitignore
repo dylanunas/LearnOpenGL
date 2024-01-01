@@ -4,6 +4,7 @@ build/
 out/
 .vs/
 x64/
+LearnOpenGL/x64
 
 # files
 *.user
