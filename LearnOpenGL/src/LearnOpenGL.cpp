@@ -24,16 +24,30 @@ int main() {
 	);
 
 	// 3D coords for a triangle
+	//float vertices[] = {
+		// positions		 // colours         // texture coords
+	//	-0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // bottom left
+	//	 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  2.0f, 0.0f,   // bottom right
+	//	-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 2.0f,   // top left
+	//	 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  2.0f, 2.0f    // top right
+	//};
+	
+	// vertices for a hexagon
 	float vertices[] = {
 		// positions		 // colours         // texture coords
-		-0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // bottom left
-		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  2.0f, 0.0f,   // bottom right
-		-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 2.0f,   // top left
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  2.0f, 2.0f    // top right
+		-0.50f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,  0.00f, 0.5f,   // most left point
+		-0.20f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.33f, 1.0f,   // top left point
+		 0.20f,  0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  0.66f, 1.0f,   // top right point
+		 0.50f,  0.0f, 0.0f,  0.0f, 1.0f, 1.0f,  1.00f, 0.5f,   // most right point
+		 0.20f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.66f, 0.0f,   // bottom right point
+		-0.20f, -0.5f, 0.0f,  1.0f, 0.0f, 1.0f,  0.33f, 0.0f    // bottom left point
 	};
+
 	unsigned int indices[] = {
-		0, 1, 2,  // first triangle
-		1, 2, 3   // second triangle
+		0, 1, 5,  // first triangle
+		1, 2, 5,  // second triangle
+		2, 5, 4,  // third triangle
+		2, 3, 4,  // fourth triangle
 	};
 
 	unsigned int EBO, VAO, VBO;
@@ -143,7 +157,7 @@ int main() {
 
 		// draw the object
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 	
 		// listen to events
 		glfwSwapBuffers(window);
