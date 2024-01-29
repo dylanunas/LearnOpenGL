@@ -32,7 +32,7 @@ int main() {
 	//	 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  2.0f, 2.0f    // top right
 	//};
 	
-	// vertices for a hexagon
+	// vertices for a hexagon 
 	float vertices[] = {
 		// positions		 // colours         // texture coords
 		-0.50f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,  0.00f, 0.5f,   // most left point
